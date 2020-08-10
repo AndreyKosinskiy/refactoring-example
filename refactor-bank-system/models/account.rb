@@ -19,12 +19,12 @@ module Model
     end
 
     def destroy_card(position:)
-      Manager::CardManager.destroy(account: self, card_number: card[position].number)
+      Manager::CardManager.destroy(account: self, card_number: @card[position].number)
       save
     end
 
     def save
-      Manager::AccountManager.update(account: self, action: '')
+      Manager::AccountManager.new.update(account: self, action: '')
     end
   end
 end

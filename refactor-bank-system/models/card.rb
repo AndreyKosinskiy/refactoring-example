@@ -1,14 +1,14 @@
-module Models
+module Model
   class Card
-    
-    def inititalize(type:, balance:)
+    attr_accessor :type, :balance, :number
+    def initialize(type:, balance:)
       @type = type
-      @number = number
-      @balance = 0
+      @balance = balance
+      @number = generate_uniq_number
     end
 
-    def number
-      @number |= 16.times.map { rand(10) }.join
+    def generate_uniq_number
+      16.times.map { rand(10) }.join
     end
   end
 end

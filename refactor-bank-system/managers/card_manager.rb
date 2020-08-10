@@ -7,7 +7,7 @@ module Manager
     }.freeze
 
     def self.create(type:)
-      Models::Card.new(*CARD_TYPE[type.to_sym])
+      Model::Card.new(**CARD_TYPE[type.to_sym])
     end
 
     def self.destroy(account:, card_number:)

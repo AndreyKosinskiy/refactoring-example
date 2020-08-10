@@ -1,7 +1,7 @@
 module Manager
   class TransactionManager
-    def create(account:, tax_manager: Manager::TaxManager)
-      Model::Transaction(account: account, tax_manager: tax_manager)
+    def self.create(account:, tax_manager: Manager::TaxManager)
+      Model::Transaction.new(account: account, tax_manager: tax_manager)
     end
   end
 end

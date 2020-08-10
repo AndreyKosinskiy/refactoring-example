@@ -17,8 +17,8 @@ module Manager
         send: [0, 1]
       }
     }.freeze
-    def create(card_type:)
-      Modesl::Tax.new(transaction_types: TAX_TYPES[card_type.to_sym])
+    def self.create(card_type:)
+      Model::Tax.new(transaction_types: TAX_TYPES[card_type.to_sym])
     end
   end
 end
