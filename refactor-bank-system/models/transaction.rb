@@ -12,20 +12,22 @@ module Model
     end
 
     def withdraw_money(amount:, card:)
+      amount = amount.to_f
       tax = @tax_manager.create(card_type: card.type)
       tax_value = tax.calc(amount: amount, transaction_type: TRANSACTION_TYPES[:withdraw])
 
       money_left = card.balance - amount - tax_value
-      if money_left > 0
+      if money_left.positive?
         card.balance = money_left
         @account.save
-        { money_left: money_left, amount: amount, tax_value: tax_balue }
+        { money_left: money_left, amount: amount, tax_value: tax_value }
       else
         false
       end
     end
 
     def put_money(amount:, card:)
+      amount = amount.to_f
       tax = @tax_manager.create(card_type: card.type)
       tax_value = tax.calc(amount: amount, transaction_type: TRANSACTION_TYPES[:put])
 
@@ -39,7 +41,24 @@ module Model
       end
     end
 
+    def check_tax(amount:, card:, type:)
+      amount = amount.to_f
+      tax = @tax_manager.create(card_type: card.type)
+      tax_value = tax.calc(amount: amount, transaction_type: TRANSACTION_TYPES[type])
+      if type == :put
+        tax_value < amount
+      else
+        balance = card.balance - amount - tax_value
+        if balance.negative?
+          false
+        else
+          true
+        end
+      end
+    end
+
     def send_money(amount:, sender_card:, recipient_card:)
+      amount = amount.to_f
       tax = @tax_manager.create(card_type: sender_card.type)
       tax_value_sender = tax.calc(amount: amount, transaction_type: TRANSACTION_TYPES[:send])
       tax = @tax_manager.create(card_type: recipient_card.type)
@@ -48,7 +67,7 @@ module Model
       sender_balance = sender_card.balance - amount - tax_value_sender
       recepient_balance = recipient_card.balance + amount - tax_value_recipient
 
-      if sender_balance < 0
+      if sender_balance.negative?
         puts "You don't have enough money on card for such operation"
       elsif tax_value_recipient >= amount
         puts 'There is no enough money on sender card'

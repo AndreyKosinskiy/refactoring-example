@@ -5,7 +5,7 @@ module Model
     end
 
     def calc(amount:, transaction_type:)
-      amount * @transaction_types[transaction_type.to_sym][0] + @transaction_types[transaction_type.to_sym][1]
+      amount.to_i * (@transaction_types[transaction_type.to_sym][0]).to_f + (@transaction_types[transaction_type.to_sym][1]).to_i
     end
   end
 end

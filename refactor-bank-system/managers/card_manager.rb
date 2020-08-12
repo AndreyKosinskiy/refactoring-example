@@ -19,9 +19,9 @@ module Manager
     end
 
     def self.get_by_card_number(card_number:)
-      all_cards = Manager::AccountManager.new.accounts.map(&:card).flatten
-      if all_cards.select { |card| card[:number] == card_number }.any?
-        all_cards.select { |card| card[:number] == card_number }.first
+      all_cards = Manager::AccountManager.new.all_cards
+      if all_cards.select { |card| card.number == card_number }.any?
+        all_cards.select { |card| card.number == card_number }.first
       else
         false
       end

@@ -27,15 +27,16 @@ module Manager
     end
 
     def load(login:, password:)
-      return false if accounts.none?
-
       if accounts.map { |a| { login: a.login, password: a.password } }.include?({ login: login, password: password })
         accounts.select { |a| login == a.login }.first
+      else
+        false
       end
     end
 
     def update(account:, action: '')
       new_accounts = []
+      puts accounts
       accounts.each do |ac|
         if ac.login == account.login
           case action
@@ -47,6 +48,18 @@ module Manager
         end
       end
       File.open(@file_path, 'w') { |f| f.write new_accounts.to_yaml }
+    end
+
+    def exists?(login)
+      accounts.map(&:login).include? login
+    end
+
+    def store_empty?
+      accounts.empty?
+    end
+
+    def all_cards
+      accounts.map(&:card).flatten
     end
 
     private
