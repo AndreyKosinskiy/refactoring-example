@@ -36,7 +36,6 @@ module Manager
 
     def update(account:, action: '')
       new_accounts = []
-      puts accounts
       accounts.each do |ac|
         if ac.login == account.login
           case action

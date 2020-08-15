@@ -49,11 +49,7 @@ module Model
         tax_value < amount
       else
         balance = card.balance - amount - tax_value
-        if balance.negative?
-          false
-        else
-          true
-        end
+        balance.positive?
       end
     end
 
@@ -66,12 +62,6 @@ module Model
 
       sender_balance = sender_card.balance - amount - tax_value_sender
       recepient_balance = recipient_card.balance + amount - tax_value_recipient
-
-      if sender_balance.negative?
-        puts "You don't have enough money on card for such operation"
-      elsif tax_value_recipient >= amount
-        puts 'There is no enough money on sender card'
-      end
 
       sender_card.balance = sender_balance
       @account.save
