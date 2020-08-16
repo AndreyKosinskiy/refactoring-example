@@ -27,7 +27,6 @@ module View
       loop do
         if @current_account.card.any?
           puts 'If you want to delete:'
-
           @current_account.card.each_with_index do |c, i|
             puts "- #{c.number}, #{c.type}, press #{i + 1}"
           end
