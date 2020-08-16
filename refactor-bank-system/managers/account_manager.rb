@@ -15,7 +15,7 @@ module Manager
     end
 
     def get_by_card_number(card_number:)
-      if accounts.select { |account| account.card.map(&:number).include?(card_number) }
+      if accounts.select { |account| account.card.map(&:number).include?(card_number) }.any?
         accounts.select { |account| account.card.map(&:number).include?(card_number) }.first
       else
         false
