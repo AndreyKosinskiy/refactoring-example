@@ -12,6 +12,7 @@ module View
     end
 
     def create
+      puts @account_manager.file_path
       loop do
         name_input
         age_input
@@ -24,7 +25,7 @@ module View
         end
         @errors = []
       end
-      Manager::AccountManager.new.create(name: @name_field, login: @login_field, password: @password_field, age: @age_field)
+      @account_manager.create(name: @name_field, login: @login_field, password: @password_field, age: @age_field)
     end
 
     def load
