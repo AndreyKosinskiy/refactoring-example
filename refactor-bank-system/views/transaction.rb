@@ -31,7 +31,7 @@ module View
                   return
                 end
               else
-                puts 'You must input correct amount of $'
+                puts 'You must input correct amount of money'
                 return
               end
             end
@@ -125,19 +125,20 @@ module View
         puts 'Input the amount of money you want to withdraw'
         amount = gets.chomp
         if amount&.to_i.to_i > 0
-
           if !@transaction_engine.check_tax(amount: amount, card: sender_card, type: :send)
             puts "You don't have enough money on card for such operation"
           elsif !@transaction_engine.check_tax(amount: amount, card: recipient_card, type: :put)
             puts 'There is no enough money on sender card'
           else
+
             result = @transaction_engine.send_money(amount: amount, sender_card: sender_card, recipient_card: recipient_card)
+
             puts "Money #{result[:sender][:amount]}$ was put on #{recipient_card.number}. Balance: #{result[:recipient][:balance]}. Tax: #{result[:recipient][:tax]}$\n"
             puts "Money #{result[:sender][:amount]}$ was put on #{sender_card.number}. Balance: #{result[:sender][:balance]}. Tax: #{result[:sender][:tax]}$\n"
             break
           end
         else
-          puts 'You entered wrong number!\n'
+          puts "You entered wrong number!\n"
         end
       end
     end
