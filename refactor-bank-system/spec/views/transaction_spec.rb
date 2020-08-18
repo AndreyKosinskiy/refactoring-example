@@ -13,8 +13,14 @@ RSpec.describe View::Transaction do
     correct_amount: 'You must input correct amount of money',
     tax_higher: 'Your tax is higher than input amount',
     exit: "press `exit` to exit\n",
-    not_money: "You don't have enough money on card for such operation"
+    not_money: "You don't have enough money on card for such operation",
+    recipient_enter: 'Enter the recipient card:'
   }.freeze
+
+  WRONG_AMOUNT = '-33'.freeze
+  DEFAULT_AMOUNT = '100'.freeze
+  DEFAULT_CARD = '1'.freeze
+  DEFAULT_CARD_SECOND = '2'.freeze
 
   let(:card2) { instance_double('Model::Card', type: 'usual', balance: 0, number: '123123') }
   let(:card1) { instance_double('Model::Card', type: 'usual', balance: 45, number: '456456456') }
@@ -48,7 +54,7 @@ RSpec.describe View::Transaction do
       expect(described_instance).to receive(:puts).with("- #{card1.number}, #{card1.type}, press 1")
       expect(described_instance).to receive(:puts).with("- #{card2.number}, #{card2.type}, press 2")
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:exit])
-      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return('1', '-22')
+      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return(DEFAULT_CARD, WRONG_AMOUNT)
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:put_amount])
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:correct_amount])
 
@@ -70,7 +76,7 @@ RSpec.describe View::Transaction do
       expect(described_instance).to receive(:puts).with("- #{card1.number}, #{card1.type}, press 1")
       expect(described_instance).to receive(:puts).with("- #{card2.number}, #{card2.type}, press 2")
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:exit])
-      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return('1', '1000')
+      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return(DEFAULT_CARD, '1000')
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:put_amount])
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:not_money])
 
@@ -82,9 +88,9 @@ RSpec.describe View::Transaction do
       expect(described_instance).to receive(:puts).with("- #{card1.number}, #{card1.type}, press 1")
       expect(described_instance).to receive(:puts).with("- #{card2.number}, #{card2.type}, press 2")
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:exit])
-      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return('1')
+      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return(DEFAULT_CARD)
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:put_amount])
-      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return('1')
+      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return(DEFAULT_CARD)
       expect(described_instance).to receive(:puts).with('Money 1.0 withdrawed from 456456456. Money left: 43.95$. Tax: 0.05$')
 
       described_instance.withdraw_money
@@ -113,7 +119,7 @@ RSpec.describe View::Transaction do
       expect(described_instance).to receive(:puts).with("- #{card1.number}, #{card1.type}, press 1")
       expect(described_instance).to receive(:puts).with("- #{card2.number}, #{card2.type}, press 2")
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:exit])
-      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return('1', '-22')
+      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return(DEFAULT_CARD, WRONG_AMOUNT)
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:put_amount1])
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:correct_amount])
 
@@ -135,7 +141,7 @@ RSpec.describe View::Transaction do
       expect(described_instance).to receive(:puts).with("- #{card1.number}, #{card1.type}, press 1")
       expect(described_instance).to receive(:puts).with("- #{card2.number}, #{card2.type}, press 2")
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:exit])
-      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return('1', '100')
+      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return(DEFAULT_CARD, DEFAULT_AMOUNT)
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:put_amount1])
       allow(described_instance.instance_variable_get(:@transaction_engine)).to receive(:put_money).and_return(false)
       expect(described_instance).to receive(:puts).with('Your tax is higher than input amount')
@@ -147,7 +153,7 @@ RSpec.describe View::Transaction do
       expect(described_instance).to receive(:puts).with("- #{card1.number}, #{card1.type}, press 1")
       expect(described_instance).to receive(:puts).with("- #{card2.number}, #{card2.type}, press 2")
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:exit])
-      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return('1', '100')
+      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return(DEFAULT_CARD, DEFAULT_AMOUNT)
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:put_amount1])
       expect(described_instance).to receive(:puts).with('Money 100.0 was put on 456456456. Balance: . Tax: 4.0')
       described_instance.put_money
@@ -184,9 +190,9 @@ RSpec.describe View::Transaction do
       expect(described_instance).to receive(:puts).with("- #{card1.number}, #{card1.type}, press 1")
       expect(described_instance).to receive(:puts).with("- #{card2.number}, #{card2.type}, press 2")
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:exit])
-      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return('2', '1123456789101112')
+      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return(DEFAULT_CARD_SECOND, '1123456789101112')
       allow(Manager::CardManager).to receive(:get_by_card_number).and_return(false)
-      expect(described_instance).to receive(:puts).with('Enter the recipient card:')
+      expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:recipient_enter])
       expect(described_instance).to receive(:puts).with("There is no card with number 1123456789101112\n")
       described_instance.send_money
     end
@@ -195,9 +201,9 @@ RSpec.describe View::Transaction do
       expect(described_instance).to receive(:puts).with("- #{card1.number}, #{card1.type}, press 1")
       expect(described_instance).to receive(:puts).with("- #{card2.number}, #{card2.type}, press 2")
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:exit])
-      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return('2', '1123456789101112', '-33')
+      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return(DEFAULT_CARD_SECOND, '1123456789101112', WRONG_AMOUNT)
       allow(Manager::CardManager).to receive(:get_by_card_number).and_return(card2)
-      expect(described_instance).to receive(:puts).with('Enter the recipient card:')
+      expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:recipient_enter])
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:put_amount])
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:wrong_number])
       described_instance.send_money
@@ -207,9 +213,9 @@ RSpec.describe View::Transaction do
       expect(described_instance).to receive(:puts).with("- #{card1.number}, #{card1.type}, press 1")
       expect(described_instance).to receive(:puts).with("- #{card2.number}, #{card2.type}, press 2")
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:exit])
-      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return('1', '1123456789101112', '10')
+      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return(DEFAULT_CARD, '1123456789101112', DEFAULT_AMOUNT) # 10
       allow(Manager::CardManager).to receive(:get_by_card_number).and_return(card2)
-      expect(described_instance).to receive(:puts).with('Enter the recipient card:')
+      expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:recipient_enter])
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:put_amount])
       allow_any_instance_of(Model::Transaction).to receive(:check_tax).and_return(false)
       expect(described_instance).to receive(:puts).with("You don't have enough money on card for such operation")
@@ -220,9 +226,9 @@ RSpec.describe View::Transaction do
       expect(described_instance).to receive(:puts).with("- #{card1.number}, #{card1.type}, press 1")
       expect(described_instance).to receive(:puts).with("- #{card2.number}, #{card2.type}, press 2")
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:exit])
-      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return('1', '1123456789101112', '10')
+      allow(described_instance).to receive_message_chain(:gets, :chomp).and_return(DEFAULT_CARD, '1123456789101112', DEFAULT_AMOUNT) # 10
       allow(Manager::CardManager).to receive(:get_by_card_number).and_return(card2)
-      expect(described_instance).to receive(:puts).with('Enter the recipient card:')
+      expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:recipient_enter])
       expect(described_instance).to receive(:puts).with(ERROR_PHRASES[:put_amount])
       expect(described_instance).to receive(:puts).with("Money 1$ was put on 456456456. Balance: 1. Tax: 1$\n")
       expect(described_instance).to receive(:puts).with("Money 1$ was put on 123123. Balance: 1. Tax: 1$\n")
